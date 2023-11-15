@@ -10,6 +10,7 @@ APIDetector is a powerful and efficient tool designed for testing exposed Swagge
 - **Customizable Output**: Save results to a file or print to stdout.
 - **Verbose and Quiet Modes**: Default verbose mode for detailed logs, with an option for quiet mode.
 - **Custom User-Agent**: Ability to specify a custom User-Agent for requests.
+- **Smart Detection of False-Positivest**: Ability to detect most of the false-positives.
 
 ## Getting Started
 
