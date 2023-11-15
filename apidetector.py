@@ -48,7 +48,7 @@ def test_subdomain_endpoints(subdomain, common_endpoints, mixed_mode, verbose, u
                 return valid_urls
         except requests.RequestException:
             pass    
-#Seconds method of detection for false-positives             
+#Second method of detection for false-positives             
     for protocol in protocols:
         test_url = f"{protocol}{subdomain}/{random_path}"
         try:
