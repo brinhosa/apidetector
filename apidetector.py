@@ -18,7 +18,7 @@ ascii_art = """
 def test_endpoint(url, verbose, user_agent):
     headers = {'User-Agent': user_agent}
     try:
-        response = requests.get(url, headers=headers, timeout=15)
+        response = requests.get(url, headers=headers, timeout=30)
         if response.status_code == 200:
             return url
     except requests.RequestException as e:
@@ -36,7 +36,18 @@ def test_subdomain_endpoints(subdomain, common_endpoints, mixed_mode, verbose, u
     random_path = generate_random_string()
     protocols = ['https://', 'http://'] if mixed_mode else ['https://']
     valid_urls = []
-    
+#Test for false-positives
+    for protocol in protocols:
+        test_url1 = f"{protocol}{subdomain}/api/swagger/v3/api-docs"
+        test_url2 = f"{protocol}{subdomain}/api/swagger/v2/api-docs"     
+        try:
+            response1 = requests.get(test_url1, headers={'User-Agent': user_agent}, timeout=15)
+            response2 = requests.get(test_url2, headers={'User-Agent': user_agent}, timeout=15)             
+            if response1.status_code == 200 and response2.status_code == 200:
+                print(f"{subdomain} not valid to test, returns success for any API version.")
+                return valid_urls
+        except requests.RequestException:
+            pass    
     for protocol in protocols:
         test_url = f"{protocol}{subdomain}/{random_path}"
         try:
@@ -123,5 +134,3 @@ if __name__ == "__main__":
         ]
 
     main(args.domain, args.input, args.output, args.threads, common_endpoints, args.mixed_mode, verbose, args.user_agent)
-
-
