@@ -87,6 +87,47 @@ Run APIDetector using the command line. Here are some usage examples:
 - `-q`, `--quiet`: Disable verbose output (default mode is verbose).
 - `-ua`, `--user-agent`: Custom User-Agent string for requests.
 
+Exposing Swagger or OpenAPI documentation endpoints can present various risks, primarily related to information disclosure. Here's an ordered list based on potential risk levels, with similar endpoints grouped together APIDetector scans:
+
+## 1. High-Risk Endpoints (Direct API Documentation):
+- **Endpoints**: 
+  - `'/swagger-ui.html'`, `'/swagger-ui/'`, `'/swagger-ui/index.html'`, `'/api/swagger-ui.html'`, `'/documentation/swagger-ui.html'`, `'/swagger/index.html'`, `'/api/docs'`, `'/docs'`, `'/api/swagger-ui'`, `'/documentation/swagger-ui'`
+- **Risk**: 
+  - These endpoints typically serve the Swagger UI interface, which provides a complete overview of all API endpoints, including request formats, query parameters, and sometimes even example requests and responses. 
+  - **Risk Level**: High. Exposing these gives potential attackers detailed insights into your API structure and potential attack vectors.
+
+## 2. Medium-High Risk Endpoints (API Schema/Specification):
+- **Endpoints**:
+  - `'/openapi.json'`, `'/swagger.json'`, `'/api/swagger.json'`, `'/swagger.yaml'`, `'/swagger.yml'`, `'/api/swagger.yaml'`, `'/api/swagger.yml'`, `'/api.json'`, `'/api.yaml'`, `'/api.yml'`, `'/documentation/swagger.json'`, `'/documentation/swagger.yaml'`, `'/documentation/swagger.yml'`
+- **Risk**: 
+  - These endpoints provide raw Swagger/OpenAPI specification files. They contain detailed information about the API endpoints, including paths, parameters, and sometimes authentication methods.
+  - **Risk Level**: Medium-High. While they require more interpretation than the UI interfaces, they still reveal extensive information about the API.
+
+## 3. Medium Risk Endpoints (API Documentation Versions):
+- **Endpoints**:
+  - `'/v2/api-docs'`, `'/v3/api-docs'`, `'/api/v2/swagger.json'`, `'/api/v3/swagger.json'`, `'/api/v1/documentation'`, `'/api/v2/documentation'`, `'/api/v3/documentation'`, `'/api/v1/api-docs'`, `'/api/v2/api-docs'`, `'/api/v3/api-docs'`, `'/swagger/v2/api-docs'`, `'/swagger/v3/api-docs'`, `'/swagger-ui.html/v2/api-docs'`, `'/swagger-ui.html/v3/api-docs'`, `'/api/swagger/v2/api-docs'`, `'/api/swagger/v3/api-docs'`
+- **Risk**: 
+  - These endpoints often refer to version-specific documentation or API descriptions. They reveal information about the API's structure and capabilities, which could aid an attacker in understanding the API's functionality and potential weaknesses.
+  - **Risk Level**: Medium. These might not be as detailed as the complete documentation or schema files, but they still provide useful information for attackers.
+
+## 4. Lower Risk Endpoints (Configuration and Resources):
+- **Endpoints**:
+  - `'/swagger-resources'`, `'/swagger-resources/configuration/ui'`, `'/swagger-resources/configuration/security'`, `'/api/swagger-resources'`, `'/api.html'`
+- **Risk**: 
+  - These endpoints often provide auxiliary information, configuration details, or resources related to the API documentation setup.
+  - **Risk Level**: Lower. They may not directly reveal API endpoint details but can give insights into the configuration and setup of the API documentation.
+
+## Summary:
+- **Highest Risk**: Directly exposing interactive API documentation interfaces.
+- **Medium-High Risk**: Exposing raw API schema/specification files.
+- **Medium Risk**: Version-specific API documentation.
+- **Lower Risk**: Configuration and resource files for API documentation.
+
+## Recommendations:
+- **Access Control**: Ensure that these endpoints are not publicly accessible or are at least protected by authentication mechanisms.
+- **Environment-Specific Exposure**: Consider exposing detailed API documentation only in development or staging environments, not in production.
+- **Monitoring and Logging**: Monitor access to these endpoints and set up alerts for unusual access patterns.
+
 ## Contributing
 
 Contributions to APIDetector are welcome! Feel free to fork the repository, make changes, and submit pull requests.
