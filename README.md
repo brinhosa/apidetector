@@ -29,9 +29,9 @@ cd apidetector
 ### Usage
 
 Run APIDetector using the command line. Here are some usage examples:
-- Common usage, scan with 30 threads a list of subdomains and save the results in a file:
+- Common usage, scan with 30 threads a list of subdomains using a Chrome user-agent and save the results in a file:
   ```bash
-  python apidetector.py -i list_of_company_subdomains.txt -o results_file.txt -t 30 
+  python apidetector.py -i list_of_company_subdomains.txt -o results_file.txt -t 30 -ua "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36"
   ```
   
 - To scan a single domain:
