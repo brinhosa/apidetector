@@ -8,6 +8,7 @@ APIDetector is a powerful and efficient tool designed for testing exposed Swagge
 - **Multiple Protocols**: Option to test endpoints over both HTTP and HTTPS.
 - **Concurrency**: Utilizes multi-threading for faster scanning.
 - **Customizable Output**: Save results to a file or print to stdout.
+- **Verbose and Quiet Modes**: Default verbose mode for detailed logs, with an option for quiet mode.
 
 ## Getting Started
 
@@ -58,6 +59,12 @@ Run APIDetector using the command line. Here are some usage examples:
   python apidetector.py -m -d example.com
   ```
 
+- To run the script in quiet mode (suppress verbose output):
+
+  ```bash
+  python apidetector.py -q -d example.com
+  ```
+
 ### Options
 
 - `-d`, `--domain`: Single domain to test.
@@ -65,10 +72,15 @@ Run APIDetector using the command line. Here are some usage examples:
 - `-o`, `--output`: Output file to write valid URLs to.
 - `-t`, `--threads`: Number of threads to use for scanning (default is 10).
 - `-m`, `--mixed-mode`: Test both HTTP and HTTPS protocols.
+- `-q`, `--quiet`: Disable verbose output (default mode is verbose).
 
 ## Contributing
 
 Contributions to APIDetector are welcome! Feel free to fork the repository, make changes, and submit pull requests.
+
+## Legal Disclaimer
+
+The use of APIDetector should be limited to testing and educational purposes only. The developers of APIDetector assume no liability and are not responsible for any misuse or damage caused by this tool. It is the end user's responsibility to obey all applicable local, state, and federal laws. Developers assume no responsibility for unauthorized or illegal use of this tool. Before using APIDetector, ensure you have permission to test the network or systems you intend to scan.
 
 ## License
 
@@ -77,8 +89,4 @@ This project is licensed under the [MIT License](LICENSE).
 ## Acknowledgments
 
 - Thanks to all the contributors who have helped with testing, suggestions, and improvements.
-- Author: Rafael Brinhosa  - https://www.linkedin.com/in/brinhosa/
-
-## Legal Disclaimer
-
-The use of APIDetector should be limited to testing and educational purposes only. The developers of APIDetector assume no liability and are not responsible for any misuse or damage caused by this tool. It is the end user's responsibility to obey all applicable local, state, and federal laws. Developers assume no responsibility for unauthorized or illegal use of this tool. Before using APIDetector, ensure you have permission to test the network or systems you intend to scan.
+- Author: Rafael B. Brinhosa  - https://www.linkedin.com/in/brinhosa/
