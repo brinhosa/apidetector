@@ -1,6 +1,6 @@
 # APIDetector
 
-APIDetector is a powerful and efficient tool designed for testing exposed Swagger endpoints in various subdomains. It's particularly useful for security professionals and developers who are engaged in API testing and vulnerability scanning.
+APIDetector is a powerful and efficient tool designed for testing exposed Swagger endpoints in various subdomains with unique smart capabilities to detect false-positives. . It's particularly useful for security professionals and developers who are engaged in API testing and vulnerability scanning.
 
 ## Features
 
@@ -10,7 +10,7 @@ APIDetector is a powerful and efficient tool designed for testing exposed Swagge
 - **Customizable Output**: Save results to a file or print to stdout.
 - **Verbose and Quiet Modes**: Default verbose mode for detailed logs, with an option for quiet mode.
 - **Custom User-Agent**: Ability to specify a custom User-Agent for requests.
-- **Smart Detection of False-Positives**: Ability to detect most of the false-positives.
+- **Smart Detection of False-Positives**: Ability to detect most false-positives.
 
 ## Getting Started
 
