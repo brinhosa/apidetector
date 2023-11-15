@@ -15,13 +15,14 @@ ascii_art = """
 """
 
 # Function to test a single endpoint
-def test_endpoint(url, verbose):
+def test_endpoint(url, verbose, user_agent):
+    headers = {'User-Agent': user_agent}
     try:
-        response = requests.get(url, timeout=15)
+        response = requests.get(url, headers=headers, timeout=15)
         if response.status_code == 200:
             return url
     except requests.RequestException as e:
-        pass
+        pass 
         #if verbose:
         #    print(f"Error testing {url}: {e}")
     return None
@@ -31,7 +32,7 @@ def generate_random_string(length=21):
     return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
 
 # Function to test all endpoints for a given subdomain
-def test_subdomain_endpoints(subdomain, common_endpoints, mixed_mode, verbose):
+def test_subdomain_endpoints(subdomain, common_endpoints, mixed_mode, verbose, user_agent):
     random_path = generate_random_string()
     protocols = ['https://', 'http://'] if mixed_mode else ['https://']
     valid_urls = []
@@ -39,7 +40,7 @@ def test_subdomain_endpoints(subdomain, common_endpoints, mixed_mode, verbose):
     for protocol in protocols:
         test_url = f"{protocol}{subdomain}/{random_path}"
         try:
-            response = requests.get(test_url, timeout=15)
+            response = requests.get(test_url, headers={'User-Agent': user_agent}, timeout=15)
             if response.status_code == 200 and verbose:
                 print(f"{subdomain} not valid to test, returns success for any path.")
                 return valid_urls
@@ -49,14 +50,14 @@ def test_subdomain_endpoints(subdomain, common_endpoints, mixed_mode, verbose):
     for protocol in protocols:
         for endpoint in common_endpoints:
             url = f"{protocol}{subdomain}{endpoint}"
-            result = test_endpoint(url, verbose)
+            result = test_endpoint(url, verbose, user_agent)
             if result:
                 valid_urls.append(result)
                 if verbose:
                     print(f"Found: {url}")
     return valid_urls
 
-def main(domain, input_file, output_file, num_threads, common_endpoints, mixed_mode, verbose):
+def main(domain, input_file, output_file, num_threads, common_endpoints, mixed_mode, verbose, user_agent):
     subdomains = [domain] if domain else []
 
     if verbose:
@@ -68,7 +69,7 @@ def main(domain, input_file, output_file, num_threads, common_endpoints, mixed_m
 
     all_valid_urls = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
-        futures = [executor.submit(test_subdomain_endpoints, subdomain, common_endpoints, mixed_mode, verbose) for subdomain in subdomains]
+        futures = [executor.submit(test_subdomain_endpoints, subdomain, common_endpoints, mixed_mode, verbose, user_agent) for subdomain in subdomains]
         for future in concurrent.futures.as_completed(futures):
             all_valid_urls.extend(future.result())
 
@@ -93,6 +94,7 @@ if __name__ == "__main__":
     parser.add_argument("-t", "--threads", type=int, default=10, help="Number of threads to use for scanning")
     parser.add_argument("-m", "--mixed-mode", action='store_true', help="Test both HTTP and HTTPS protocols")
     parser.add_argument("-q", "--quiet", action='store_true', help="Disable verbose output")
+    parser.add_argument("-ua", "--user-agent", default="APIDetector", help="Custom User-Agent string for requests")
 
     args = parser.parse_args()
 
@@ -120,5 +122,6 @@ if __name__ == "__main__":
         '/api/swagger/v2/api-docs', '/api/swagger/v3/api-docs'
         ]
 
+    main(args.domain, args.input, args.output, args.threads, common_endpoints, args.mixed_mode, verbose, args.user_agent)
 
-    main(args.domain, args.input, args.output, args.threads, common_endpoints, args.mixed_mode, verbose)
+
