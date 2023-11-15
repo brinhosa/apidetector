@@ -18,7 +18,7 @@ ascii_art = """
 def test_endpoint(url, verbose, user_agent):
     headers = {'User-Agent': user_agent}
     try:
-        response = requests.get(url, headers=headers, timeout=30)
+        response = requests.get(url, headers=headers, timeout=30, allow_redirects=False)
         if response.status_code == 200:
             return url
     except requests.RequestException as e:
