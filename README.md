@@ -9,6 +9,7 @@ APIDetector is a powerful and efficient tool designed for testing exposed Swagge
 - **Concurrency**: Utilizes multi-threading for faster scanning.
 - **Customizable Output**: Save results to a file or print to stdout.
 - **Verbose and Quiet Modes**: Default verbose mode for detailed logs, with an option for quiet mode.
+- **Custom User-Agent**: Ability to specify a custom User-Agent for requests.
 
 ## Getting Started
 
@@ -69,6 +70,12 @@ Run APIDetector using the command line. Here are some usage examples:
   python apidetector.py -q -d example.com
   ```
 
+- To run the script with a custom user-agent:
+
+  ```bash
+  python apidetector.py -d example.com -ua "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36"
+  ```
+  
 ### Options
 
 - `-d`, `--domain`: Single domain to test.
@@ -77,6 +84,7 @@ Run APIDetector using the command line. Here are some usage examples:
 - `-t`, `--threads`: Number of threads to use for scanning (default is 10).
 - `-m`, `--mixed-mode`: Test both HTTP and HTTPS protocols.
 - `-q`, `--quiet`: Disable verbose output (default mode is verbose).
+- `-ua`, `--user-agent`: Custom User-Agent string for requests.
 
 ## Contributing
 
@@ -94,3 +102,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 - Thanks to all the contributors who have helped with testing, suggestions, and improvements.
 - Author: Rafael B. Brinhosa  - https://www.linkedin.com/in/brinhosa/
+
