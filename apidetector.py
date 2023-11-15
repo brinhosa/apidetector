@@ -21,8 +21,9 @@ def test_endpoint(url, verbose):
         if response.status_code == 200:
             return url
     except requests.RequestException as e:
-        if verbose:
-            print(f"Error testing {url}: {e}")
+        pass
+        #if verbose:
+        #    print(f"Error testing {url}: {e}")
     return None
 
 # Random string to test invalid paths
