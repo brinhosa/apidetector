@@ -21,8 +21,8 @@ Before running APIDetector, ensure you have Python 3.x installed on your system.
 Clone the APIDetector repository to your local machine using:
 
 ```bash
-git clone https://github.com/[your-username]/APIDetector.git
-cd APIDetector
+git clone https://github.com/brinhosa/apidetector.git
+cd apidetector
 ```
 
 ### Usage
