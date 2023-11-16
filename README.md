@@ -87,7 +87,7 @@ Run APIDetector using the command line. Here are some usage examples:
 - `-q`, `--quiet`: Disable verbose output (default mode is verbose).
 - `-ua`, `--user-agent`: Custom User-Agent string for requests.
 
-### RISKS
+### RISK DETAILS OF EACH ENDPOINT APIDETECTOR FINDS
 Exposing Swagger or OpenAPI documentation endpoints can present various risks, primarily related to information disclosure. Here's an ordered list based on potential risk levels, with similar endpoints grouped together APIDetector scans:
 
 #### 1. High-Risk Endpoints (Direct API Documentation):
