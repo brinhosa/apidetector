@@ -3,6 +3,8 @@ import concurrent.futures
 import argparse
 import random
 import string
+import difflib
+
 
 # ASCII Art for APIDetector
 ascii_art = """
@@ -36,24 +38,30 @@ def test_subdomain_endpoints(subdomain, common_endpoints, mixed_mode, verbose, u
     random_path = generate_random_string()
     protocols = ['https://', 'http://'] if mixed_mode else ['https://']
     valid_urls = []
-#Test for false-positives
+# Test for false-positives
     for protocol in protocols:
         test_url1 = f"{protocol}{subdomain}/api/swagger/v3/api-docs"
-        test_url2 = f"{protocol}{subdomain}/api/swagger/v2/api-docs"     
+        test_url2 = f"{protocol}{subdomain}/api/swagger/v2/api-docs"
         try:
             response1 = requests.get(test_url1, headers={'User-Agent': user_agent}, timeout=15)
-            response2 = requests.get(test_url2, headers={'User-Agent': user_agent}, timeout=15)             
+            response2 = requests.get(test_url2, headers={'User-Agent': user_agent}, timeout=15)
+    
             if response1.status_code == 200 and response2.status_code == 200:
-                print(f"{subdomain} not valid to test, returns success for any API version.")
-                return valid_urls
+                # Calculate similarity
+                similarity = difflib.SequenceMatcher(None, response1.text, response2.text).ratio()
+                if similarity > 0.70:
+                    print(f"{subdomain} not valid to test, returns success for any API version with high similarity.")
+                    return valid_urls
+                else:
+                    print(f"{subdomain} valid for testing, API versions are not highly similar.")
         except requests.RequestException:
-            pass    
+            pass
 #Second method of detection for false-positives             
     for protocol in protocols:
         test_url = f"{protocol}{subdomain}/{random_path}"
         try:
-            response = requests.get(test_url, headers={'User-Agent': user_agent}, timeout=15)
-            if response.status_code == 200 and verbose:
+            response_false = requests.get(test_url, headers={'User-Agent': user_agent}, timeout=15)
+            if response_false.status_code == 200 and verbose:
                 print(f"{subdomain} not valid to test, returns success for any path.")
                 return valid_urls
         except requests.RequestException:
