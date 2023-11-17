@@ -79,12 +79,13 @@ def main(domain, input_file, output_file, num_threads, common_endpoints, mixed_m
         with open(input_file, 'r') as file:
             subdomains.extend(line.strip() for line in file)
 
-    all_valid_urls = []
-    with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
-        futures = [executor.submit(test_subdomain_endpoints, subdomain, common_endpoints, mixed_mode, verbose, user_agent) for subdomain in subdomains]
-        for future in concurrent.futures.as_completed(futures):
-            all_valid_urls.extend(future.result())
+all_valid_urls = []
+with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
+    futures = [executor.submit(test_subdomain_endpoints, subdomain, common_endpoints, mixed_mode, verbose, user_agent) for subdomain in subdomains]
+    for future in concurrent.futures.as_completed(futures):
+        all_valid_urls.extend(future.result())
 
+if all_valid_urls:
     if output_file:
         with open(output_file, 'w') as file:
             for url in sorted(set(all_valid_urls)):
@@ -96,6 +97,9 @@ def main(domain, input_file, output_file, num_threads, common_endpoints, mixed_m
             print("All results found in alphabetic order:")
         for url in sorted(set(all_valid_urls)):
             print(url)
+else:
+    print("No exposed URLs found.")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="APIDetector - API Security Testing Tool\n" + ascii_art,
@@ -131,7 +135,7 @@ if __name__ == "__main__":
         '/documentation/swagger.yml', '/documentation/swagger-ui.html',
         '/documentation/swagger-ui', '/swagger/index.html', '/swagger-ui.html/v2/api-docs',
         '/swagger-ui.html/v3/api-docs', '/swagger/v2/api-docs', '/swagger/v3/api-docs',
-        '/api/swagger/v2/api-docs', '/api/swagger/v3/api-docs'
+        '/api/swagger/v2/api-docs', '/api/swagger/v3/api-docs', '/classicapi/doc/'
         ]
 
     main(args.domain, args.input, args.output, args.threads, common_endpoints, args.mixed_mode, verbose, args.user_agent)
