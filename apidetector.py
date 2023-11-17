@@ -79,26 +79,26 @@ def main(domain, input_file, output_file, num_threads, common_endpoints, mixed_m
         with open(input_file, 'r') as file:
             subdomains.extend(line.strip() for line in file)
 
-all_valid_urls = []
-with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
-    futures = [executor.submit(test_subdomain_endpoints, subdomain, common_endpoints, mixed_mode, verbose, user_agent) for subdomain in subdomains]
-    for future in concurrent.futures.as_completed(futures):
-        all_valid_urls.extend(future.result())
+    all_valid_urls = []
+    with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
+        futures = [executor.submit(test_subdomain_endpoints, subdomain, common_endpoints, mixed_mode, verbose, user_agent) for subdomain in subdomains]
+        for future in concurrent.futures.as_completed(futures):
+            all_valid_urls.extend(future.result())
 
-if all_valid_urls:
-    if output_file:
-        with open(output_file, 'w') as file:
+    if all_valid_urls:
+        if output_file:
+            with open(output_file, 'w') as file:
+                for url in sorted(set(all_valid_urls)):
+                    file.write(url + '\n')
+            if verbose:
+                print(f"Completed. Valid URLs are saved in {output_file}")
+        else:
+            if verbose:
+                print("All results found in alphabetic order:")
             for url in sorted(set(all_valid_urls)):
-                file.write(url + '\n')
-        if verbose:
-            print(f"Completed. Valid URLs are saved in {output_file}")
+                print(url)
     else:
-        if verbose:
-            print("All results found in alphabetic order:")
-        for url in sorted(set(all_valid_urls)):
-            print(url)
-else:
-    print("No exposed URLs found.")
+        print("No exposed URLs found.")
 
 
 if __name__ == "__main__":
