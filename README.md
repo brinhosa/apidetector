@@ -16,7 +16,7 @@ APIDetector is a powerful and efficient tool designed for testing exposed Swagge
 
 ### Prerequisites
 
-Before running APIDetector, ensure you have Python 3.x installed on your system. You can download Python [here](https://www.python.org/downloads/).
+Before running APIDetector, ensure you have Python 3.x installed on your system and the requests package. You can download Python [here](https://www.python.org/downloads/).
 
 ### Installation
 
@@ -25,6 +25,7 @@ Clone the APIDetector repository to your local machine using:
 ```bash
 git clone https://github.com/brinhosa/apidetector.git
 cd apidetector
+pip install requests 
 ```
 
 ### Usage
