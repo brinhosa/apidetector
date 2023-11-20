@@ -183,4 +183,4 @@ if __name__ == "__main__":
         '/api/swagger/v2/api-docs', '/api/swagger/v3/api-docs', '/classicapi/doc/'
         ]
 
-    main(args.domain, args.input, args.output, args.threads, common_endpoints, args.mixed_mode, verbose, args.user_agent)
+    main(args.domain, args.input, args.output, args.threads, common_endpoints, args.mixed_mode, verbose, args.user_agent, args.xss_check)
