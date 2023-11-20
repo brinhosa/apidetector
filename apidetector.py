@@ -26,6 +26,8 @@ def test_endpoint(url, error_content, verbose, user_agent):
             similarity = difflib.SequenceMatcher(None, error_content, response.text).ratio()
             if similarity < 0.90:
                 return url
+            else:
+                print(f"{subdomain} not valid to test, returns success for any request with high similarity of {similarity} with the error page.")    
     except requests.RequestException as e:
         pass
     return None
@@ -160,5 +162,30 @@ if __name__ == "__main__":
         '/swagger-ui.html/v3/api-docs', '/swagger/v2/api-docs', '/swagger/v3/api-docs',
         '/api/swagger/v2/api-docs', '/api/swagger/v3/api-docs', '/classicapi/doc/'
         ]
+    common_endpoints_big = [
+    '/swagger-ui.html', '/api-docs', '/swagger.json', '/docs',
+    '/swagger-ui/', '/swagger-ui/index.html', '/api/swagger.json', 
+    '/api/swagger-ui.html', '/swagger.yaml', '/swagger.yml', 
+    '/api/swagger.yaml', '/api/swagger.yml', '/swagger-resources', 
+    '/swagger-resources/configuration/ui', '/swagger-resources/configuration/security', 
+    '/api/swagger-resources', '/api/v2/swagger.json', '/api/v3/swagger.json', 
+    '/api/v1/documentation', '/api/v2/documentation', '/api/v3/documentation', 
+    '/api/v1/api-docs', '/api/v2/api-docs', '/api/v3/api-docs', 
+    '/api/swagger', '/api/docs', '/api/swagger-ui', '/api.json', 
+    '/api.yaml', '/api.yml', '/api.html', '/documentation/swagger.json', 
+    '/documentation/swagger.yaml', '/documentation/swagger.yml', 
+    '/documentation/swagger-ui.html', '/documentation/swagger-ui', 
+    '/swagger/index.html', '/swagger-ui.html/v2/api-docs', 
+    '/swagger-ui.html/v3/api-docs', '/swagger/v2/api-docs', '/swagger/v3/api-docs', 
+    '/api/swagger/v2/api-docs', '/api/swagger/v3/api-docs', '/classicapi/doc/',
+    '/api-doc', '/api/package_search/v4/documentation', '/api/2/explore/', 
+    '/apidoc', '/apidocs', '/application', '/backoffice/v1/ui', 
+    '/build/reference/web-api/explore', '/core/latest/swagger-ui/index.html', 
+    '/csp/gateway/slc/api/swagger-ui.html', '/doc', '/internal/docs', 
+    '/rest/v1', '/rest/v3/doc', '/swagger', '/swaggerui', '/ui', 
+    '/ui/', '/v1', '/v1.0', '/v1.1', '/v2', '/v2.0', '/v3',
+    '/v1.x/swagger-ui.html', '/swagger/swagger-ui.html', '/swagger/index.html'
+    ]
 
+     
     main(args.domain, args.input, args.output, args.threads, common_endpoints, args.mixed_mode, verbose, args.user_agent)
