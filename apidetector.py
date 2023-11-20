@@ -71,27 +71,6 @@ def test_subdomain_endpoints(subdomain, common_endpoints, mixed_mode, verbose, u
         except requests.RequestException:
             pass
 #Second method of detection for false-positives             
-     """
-    for protocol in protocols:
-        test_url = f"{protocol}{subdomain}/{random_path}"
-        try:
-            response_false = requests.get(test_url, headers={'User-Agent': user_agent}, timeout=15)
-            if response_false.status_code == 200 and verbose:
-                print(f"{subdomain} not valid to test, returns success for any path.")
-                return valid_urls
-        except requests.RequestException:
-            pass
-
-    for protocol in protocols:
-        for endpoint in common_endpoints:
-            url = f"{protocol}{subdomain}{endpoint}"
-            result = test_endpoint(url, verbose, user_agent)
-            if result:
-                valid_urls.append(result)
-                if verbose:
-                    print(f"Found: {url}")
-    return valid_urls
-"""    
     # Retrieve the error page content
     for protocol in protocols:
         error_url = f"{protocol}{subdomain}/{random_path}"
