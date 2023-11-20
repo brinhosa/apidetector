@@ -26,8 +26,8 @@ def test_endpoint(url, error_content, verbose, user_agent):
             similarity = difflib.SequenceMatcher(None, error_content, response.text).ratio()
             if similarity < 0.90:
                 return url
-            else:
-                print(f"{url} not valid to test, returns success for any request with high similarity of {similarity} with the error page.")    
+            #else:
+                #print(f"{url} not valid to test, returns success for any request with high similarity of {similarity} with the error page.")    
     except requests.RequestException as e:
         pass
     return None
