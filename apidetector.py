@@ -36,12 +36,23 @@ def generate_random_string(length=21):
     return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
 
 # Function to test all endpoints for a given subdomain
-def test_subdomain_endpoints(subdomain, common_endpoints, mixed_mode, verbose, user_agent):     
+def test_subdomain_endpoints(subdomain, common_endpoints, mixed_mode, verbose, user_agent):
     random_path = generate_random_string()
     protocols = ['https://', 'http://'] if mixed_mode else ['https://']
     valid_urls = []
-    error_content = ""     
-# Test for false-positives
+    error_content = ""
+
+    # Retrieve the error page content
+    for protocol in protocols:
+        error_url = f"{protocol}{subdomain}/{random_path}"
+        try:
+            error_response = requests.get(error_url, headers={'User-Agent': user_agent}, timeout=15)
+            error_content = error_response.text
+            break  # Assuming the same error content for all protocols
+        except requests.RequestException:
+            pass
+
+    # Test for false-positives
     for protocol in protocols:
         test_url1 = f"{protocol}{subdomain}/api/swagger/v3/api-docs"
         test_url2 = f"{protocol}{subdomain}/api/swagger/v2/api-docs"
