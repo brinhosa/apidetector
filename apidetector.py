@@ -64,7 +64,7 @@ def test_subdomain_endpoints(subdomain, common_endpoints, mixed_mode, verbose, u
                 # Calculate similarity
                 similarity = difflib.SequenceMatcher(None, response1.text, response2.text).ratio()
                 if similarity > 0.70:
-                    print(f"{subdomain} not valid to test, returns success for any API version with high similarity.")
+                    print(f"{subdomain} not valid to test, returns success for any API version with high similarity of {similarity}.")
                     return valid_urls
                 else:
                     print(f"{subdomain} valid for testing, API versions are not highly similar.")
