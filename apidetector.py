@@ -17,27 +17,30 @@ ascii_art = """
 """
 
 # Function to test a single endpoint
-def test_endpoint(url, verbose, user_agent):
+def test_endpoint(url, error_content, verbose, user_agent):
     headers = {'User-Agent': user_agent}
     try:
         response = requests.get(url, headers=headers, timeout=30, allow_redirects=False)
         if response.status_code == 200:
-            return url
+            # Calculate similarity with the error content
+            similarity = difflib.SequenceMatcher(None, error_content, response.text).ratio()
+            if similarity < 0.90:
+                return url
     except requests.RequestException as e:
-        pass 
-        #if verbose:
-        #    print(f"Error testing {url}: {e}")
+        pass
     return None
+
 
 # Random string to test invalid paths
 def generate_random_string(length=21):
     return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
 
 # Function to test all endpoints for a given subdomain
-def test_subdomain_endpoints(subdomain, common_endpoints, mixed_mode, verbose, user_agent):
+def test_subdomain_endpoints(subdomain, common_endpoints, mixed_mode, verbose, user_agent):     
     random_path = generate_random_string()
     protocols = ['https://', 'http://'] if mixed_mode else ['https://']
     valid_urls = []
+    error_content = ""     
 # Test for false-positives
     for protocol in protocols:
         test_url1 = f"{protocol}{subdomain}/api/swagger/v3/api-docs"
@@ -57,6 +60,7 @@ def test_subdomain_endpoints(subdomain, common_endpoints, mixed_mode, verbose, u
         except requests.RequestException:
             pass
 #Second method of detection for false-positives             
+     """
     for protocol in protocols:
         test_url = f"{protocol}{subdomain}/{random_path}"
         try:
@@ -76,6 +80,27 @@ def test_subdomain_endpoints(subdomain, common_endpoints, mixed_mode, verbose, u
                 if verbose:
                     print(f"Found: {url}")
     return valid_urls
+"""    
+    # Retrieve the error page content
+    for protocol in protocols:
+        error_url = f"{protocol}{subdomain}/{random_path}"
+        try:
+            error_response = requests.get(error_url, headers={'User-Agent': user_agent}, timeout=15)
+            error_content = error_response.text
+            break  # Assuming the same error content for all protocols
+        except requests.RequestException:
+            pass
+             
+    for protocol in protocols:
+        for endpoint in common_endpoints:
+            url = f"{protocol}{subdomain}{endpoint}"
+            result = test_endpoint(url, error_content, verbose, user_agent)
+            if result:
+                valid_urls.append(result)
+                if verbose:
+                    print(f"Found: {url}")
+    return valid_urls
+
 
 def main(domain, input_file, output_file, num_threads, common_endpoints, mixed_mode, verbose, user_agent):
     subdomains = [domain] if domain else []
