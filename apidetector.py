@@ -17,24 +17,18 @@ ascii_art = """
 """
 
 # Function to test a single endpoint
-def test_endpoint(url, error_content, verbose, user_agent, xss_check):
+def test_endpoint(url, error_content, verbose, user_agent):
     headers = {'User-Agent': user_agent}
-    xss_vulnerable = False
     try:
         response = requests.get(url, headers=headers, timeout=30, allow_redirects=False)
         if response.status_code == 200:
+            # Calculate similarity with the error content
             similarity = difflib.SequenceMatcher(None, error_content, response.text).ratio()
             if similarity < 0.90:
-                if xss_check:
-                    xss_response = requests.get(url + "?configUrl=https://raw.githubusercontent.com/brinhosa/payloads/master/testswagger.json", headers=headers, timeout=30)
-                    if "<img onerror=\"alert('XSS')\" src=\"1\">" in xss_response.text:
-                        print(f"Found XSS in the URL: {url}")
-                        xss_vulnerable = True
-                return url, xss_vulnerable
+                return url
     except requests.RequestException as e:
         pass
-
-    return None, xss_vulnerable
+    return None
 
 
 # Random string to test invalid paths
@@ -42,12 +36,11 @@ def generate_random_string(length=21):
     return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
 
 # Function to test all endpoints for a given subdomain
-def test_subdomain_endpoints(subdomain, common_endpoints, mixed_mode, verbose, user_agent, xss_check):
+def test_subdomain_endpoints(subdomain, common_endpoints, mixed_mode, verbose, user_agent):
     random_path = generate_random_string()
     protocols = ['https://', 'http://'] if mixed_mode else ['https://']
     valid_urls = []
     error_content = ""
-    xss_urls = []
 
     # Retrieve the error page content
     for protocol in protocols:
@@ -91,18 +84,15 @@ def test_subdomain_endpoints(subdomain, common_endpoints, mixed_mode, verbose, u
     for protocol in protocols:
         for endpoint in common_endpoints:
             url = f"{protocol}{subdomain}{endpoint}"
-            result, is_xss = test_endpoint(url, error_content, verbose, user_agent, xss_check)
+            result = test_endpoint(url, error_content, verbose, user_agent)
             if result:
                 valid_urls.append(result)
-                if is_xss:
-                    xss_urls.append(result)
                 if verbose:
                     print(f"Found: {url}")
+    return valid_urls
 
-    return valid_urls, xss_urls
 
-
-def main(domain, input_file, output_file, num_threads, common_endpoints, mixed_mode, verbose, user_agent, xss_check):
+def main(domain, input_file, output_file, num_threads, common_endpoints, mixed_mode, verbose, user_agent):
     subdomains = [domain] if domain else []
 
     if verbose:
@@ -112,13 +102,11 @@ def main(domain, input_file, output_file, num_threads, common_endpoints, mixed_m
         with open(input_file, 'r') as file:
             subdomains.extend(line.strip() for line in file)
 
-    all_valid_urls, all_xss_urls = [], []
+    all_valid_urls = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
-        futures = [executor.submit(test_subdomain_endpoints, subdomain, common_endpoints, mixed_mode, verbose, user_agent, xss_check) for subdomain in subdomains]
+        futures = [executor.submit(test_subdomain_endpoints, subdomain, common_endpoints, mixed_mode, verbose, user_agent) for subdomain in subdomains]
         for future in concurrent.futures.as_completed(futures):
-            valid_urls, xss_urls = future.result()
-            all_valid_urls.extend(valid_urls)
-            all_xss_urls.extend(xss_urls)     
+            all_valid_urls.extend(future.result())
 
     if all_valid_urls:
         if output_file:
@@ -135,14 +123,6 @@ def main(domain, input_file, output_file, num_threads, common_endpoints, mixed_m
     else:
         print("No exposed URLs found.")
 
-    if all_xss_urls and xss_check:
-        xss_output_file = f"{output_file}_xss.txt" if output_file else "xss_results.txt"
-        with open(xss_output_file, 'w') as file:
-            for url in sorted(set(all_xss_urls)):
-                file.write(url + '\n')
-        if verbose:
-            print(f"XSS vulnerabilities saved in {xss_output_file}")            
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="APIDetector - API Security Testing Tool\n" + ascii_art,
@@ -154,8 +134,6 @@ if __name__ == "__main__":
     parser.add_argument("-m", "--mixed-mode", action='store_true', help="Test both HTTP and HTTPS protocols")
     parser.add_argument("-q", "--quiet", action='store_true', help="Disable verbose output")
     parser.add_argument("-ua", "--user-agent", default="APIDetector", help="Custom User-Agent string for requests")
-    parser.add_argument("-xss", "--xss-check", action='store_true', help="Enable XSS vulnerability checking")
- 
 
     args = parser.parse_args()
 
@@ -183,4 +161,4 @@ if __name__ == "__main__":
         '/api/swagger/v2/api-docs', '/api/swagger/v3/api-docs', '/classicapi/doc/'
         ]
 
-    main(args.domain, args.input, args.output, args.threads, common_endpoints, args.mixed_mode, verbose, args.user_agent, args.xss_check)
+    main(args.domain, args.input, args.output, args.threads, common_endpoints, args.mixed_mode, verbose, args.user_agent)
