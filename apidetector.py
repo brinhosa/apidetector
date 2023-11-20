@@ -27,7 +27,7 @@ def test_endpoint(url, error_content, verbose, user_agent):
             if similarity < 0.90:
                 return url
             else:
-                print(f"{subdomain} not valid to test, returns success for any request with high similarity of {similarity} with the error page.")    
+                print(f"{url} not valid to test, returns success for any request with high similarity of {similarity} with the error page.")    
     except requests.RequestException as e:
         pass
     return None
