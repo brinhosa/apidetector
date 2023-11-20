@@ -114,7 +114,7 @@ def main(domain, input_file, output_file, num_threads, common_endpoints, mixed_m
 
     all_valid_urls, all_xss_urls = [], []
     with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
-        futures = [executor.submit(test_subdomain_endpoints, subdomain, common_endpoints, mixed_mode, verbose, user_agent) for subdomain in subdomains]
+        futures = [executor.submit(test_subdomain_endpoints, subdomain, common_endpoints, mixed_mode, verbose, user_agent, xss_check) for subdomain in subdomains]
         for future in concurrent.futures.as_completed(futures):
             valid_urls, xss_urls = future.result()
             all_valid_urls.extend(valid_urls)
