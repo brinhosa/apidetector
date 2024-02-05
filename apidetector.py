@@ -4,7 +4,7 @@ import argparse
 import random
 import string
 import difflib
-
+ 
 
 # ASCII Art for APIDetector
 ascii_art = """
