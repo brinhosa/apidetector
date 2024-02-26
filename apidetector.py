@@ -16,7 +16,7 @@ ascii_art = """
                                         https://github.com/brinhosa/apidetector                                                                                                              
 """
 
-# Function to test a single endpoint
+#  Function to test a single endpoint
 def test_endpoint(url, error_content, verbose, user_agent):
     headers = {'User-Agent': user_agent}
     try:
