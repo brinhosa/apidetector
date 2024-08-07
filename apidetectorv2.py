@@ -1,4 +1,3 @@
-
 #REQUIREMENTS:
 #pip install playwright nest_asyncio
 #EXECUTE:
