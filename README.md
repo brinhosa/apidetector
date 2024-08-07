@@ -133,6 +133,9 @@ Exposing Swagger or OpenAPI documentation endpoints can present various risks, p
 ## Contributing
 
 Contributions to APIDetector are welcome! Feel free to fork the repository, make changes, and submit pull requests.
+Special thanks to the contributing members who helped with testing and features suggestions:
+- Denis Lourenço
+- Bruno Francisco Cardoso
 
 ## Legal Disclaimer
 
