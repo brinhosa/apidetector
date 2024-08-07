@@ -1,6 +1,24 @@
 # APIDetector
- 
+
 APIDetector is a powerful and efficient tool designed for testing exposed Swagger endpoints in various subdomains with unique smart capabilities to detect false-positives. It's particularly useful for security professionals and developers who are engaged in API testing and vulnerability scanning.
+
+## New in Version 2
+
+APIDetector v2, launched at Blackhat Arsenal, automatically detects vulnerable Swagger versions with XSS and creates a proof of concept (PoC). The `apidetectorv2.py` file has been added to the repository to support this new feature.
+
+### Requirements
+
+To use the new version, install the required packages:
+
+```bash
+pip install playwright nest_asyncio
+```
+
+Then, install Playwright:
+
+```bash
+playwright install
+```
 
 ## Features
 
@@ -11,6 +29,7 @@ APIDetector is a powerful and efficient tool designed for testing exposed Swagge
 - **Verbose and Quiet Modes**: Default verbose mode for detailed logs, with an option for quiet mode.
 - **Custom User-Agent**: Ability to specify a custom User-Agent for requests.
 - **Smart Detection of False-Positives**: Ability to detect most false-positives.
+- **Automatic PoC Generation**: Detects vulnerable Swagger versions and generates a PoC image automatically.
 
 ## Getting Started
 
@@ -25,17 +44,18 @@ Clone the APIDetector repository to your local machine using:
 ```bash
 git clone https://github.com/brinhosa/apidetector.git
 cd apidetector
-pip install requests 
+pip install requests
 ```
 
 ### Usage
 
 Run APIDetector using the command line. Here are some usage examples:
+
 - Common usage, scan with 30 threads a list of subdomains using a Chrome user-agent and save the results in a file:
   ```bash
   python apidetector.py -i list_of_company_subdomains.txt -o results_file.txt -t 30 -ua "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36"
   ```
-  
+
 - To scan a single domain:
 
   ```bash
@@ -77,7 +97,7 @@ Run APIDetector using the command line. Here are some usage examples:
   ```bash
   python apidetector.py -d example.com -ua "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36"
   ```
-  
+
 ### Options
 
 - `-d`, `--domain`: Single domain to test.
@@ -88,7 +108,8 @@ Run APIDetector using the command line. Here are some usage examples:
 - `-q`, `--quiet`: Disable verbose output (default mode is verbose).
 - `-ua`, `--user-agent`: Custom User-Agent string for requests.
 
-### RISK DETAILS OF EACH ENDPOINT APIDETECTOR FINDS
+### Risk Details of Each Endpoint APIDetector Finds
+
 Exposing Swagger or OpenAPI documentation endpoints can present various risks, primarily related to information disclosure. Here's an ordered list based on potential risk levels, with similar endpoints grouped together APIDetector scans:
 
 #### 1. High-Risk Endpoints (Direct API Documentation):
@@ -149,4 +170,3 @@ This project is licensed under the [MIT License](LICENSE).
 
 - Thanks to all the contributors who have helped with testing, suggestions, and improvements.
 - Author: Rafael B. Brinhosa  - https://www.linkedin.com/in/brinhosa/
-
