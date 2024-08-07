@@ -97,6 +97,7 @@ Run APIDetector using the command line. Here are some usage examples:
   ```bash
   python apidetector.py -d example.com -ua "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36"
   ```
+If you are using APIDetector v2, replace the commands by apidetectorv2.py.
 
 ### Options
 
