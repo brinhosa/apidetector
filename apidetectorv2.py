@@ -2,7 +2,6 @@
 #pip install playwright nest_asyncio
 #EXECUTE:
 #playwright install
-
 import requests
 import concurrent.futures
 import argparse
@@ -10,6 +9,7 @@ import random
 import string
 import difflib
 import subprocess
+import os
 
 # ASCII Art for APIDetector
 ascii_art = """
@@ -26,13 +26,15 @@ def test_endpoint(url, error_content, verbose, user_agent):
     headers = {'User-Agent': user_agent}
     try:
         response = requests.get(url, headers=headers, timeout=30, allow_redirects=False)
-        if response.status_code == 200:
+        if response.status_code == 200 and "Page Not Found".lower() not in response.text.lower():
             # Calculate similarity with the error content
             similarity = difflib.SequenceMatcher(None, error_content, response.text).ratio()
             if similarity < 0.90:
                 if '/swagger-ui/index.html' in url:
                     print(f"Calling PoC generator for {url}")
-                    subprocess.run(['python3', 'pocgenerator.py', url+"?configUrl=https://raw.githubusercontent.com/brinhosa/payloads/master/testswagger.json"])
+                    current_dir = os.path.dirname(os.path.abspath(__file__))
+                    pocgenerator_path = os.path.join(current_dir, 'pocgenerator.py')
+                    subprocess.run(['python3', pocgenerator_path, url+"?configUrl=https://raw.githubusercontent.com/brinhosa/payloads/master/testswagger.json"])
                 return url
     except requests.RequestException as e:
         pass
@@ -54,8 +56,9 @@ def test_subdomain_endpoints(subdomain, common_endpoints, mixed_mode, verbose, u
         error_url = f"{protocol}{subdomain}/{random_path}"
         try:
             error_response = requests.get(error_url, headers={'User-Agent': user_agent}, timeout=15)
-            error_content = error_response.text
-            break  # Assuming the same error content for all protocols
+            if error_response.status_code == 404 or "Page Not Found".lower() in error_response.text.lower():
+                error_content = error_response.text
+                break  # Assuming the same error content for all protocols
         except requests.RequestException:
             pass
 
