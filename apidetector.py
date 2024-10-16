@@ -5,6 +5,8 @@ import random
 import string
 import difflib
  
+## Legal Disclaimer
+#The use of APIDetector should be limited to testing and educational purposes only. The developers of APIDetector assume no liability and are not responsible for any misuse or damage caused by this tool. It is the end user's responsibility to obey all applicable local, state, and federal laws. Developers assume no responsibility for unauthorized or illegal use of this tool. Before using APIDetector, ensure you have permission to test the network or systems you intend to scan.
 
 # ASCII Art for APIDetector
 ascii_art = """
