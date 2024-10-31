@@ -161,7 +161,8 @@ Special thanks to the contributing members who helped with testing and features 
 
 ## Legal Disclaimer
 
-The use of APIDetector should be limited to testing and educational purposes only. The developers of APIDetector assume no liability and are not responsible for any misuse or damage caused by this tool. It is the end user's responsibility to obey all applicable local, state, and federal laws. Developers assume no responsibility for unauthorized or illegal use of this tool. Before using APIDetector, ensure you have permission to test the network or systems you intend to scan.
+The APIDetector tool is strictly intended for testing and educational purposes only. The developers of APIDetector assume no liability and disclaim all responsibility for any misuse, unintended consequences, or damage caused by the use of this tool. Any unauthorized, illegal, or otherwise harmful use of APIDetector is expressly prohibited. The end user bears full responsibility for ensuring compliance with all relevant local, state, federal, and international laws. By using this tool, the user acknowledges that they hold the necessary authorizations to test the networks or systems they intend to scan and agrees to indemnify the developers against any and all claims arising from its use.
+The end user is solely responsible for ensuring that their use of this tool does not violate any legal restrictions or terms of service governing the networks or systems under test.
 
 ## License
 
