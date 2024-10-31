@@ -164,6 +164,11 @@ Special thanks to the contributing members who helped with testing and features 
 The APIDetector tool is strictly intended for testing and educational purposes only. The developers of APIDetector assume no liability and disclaim all responsibility for any misuse, unintended consequences, or damage caused by the use of this tool. Any unauthorized, illegal, or otherwise harmful use of APIDetector is expressly prohibited. The end user bears full responsibility for ensuring compliance with all relevant local, state, federal, and international laws. By using this tool, the user acknowledges that they hold the necessary authorizations to test the networks or systems they intend to scan and agrees to indemnify the developers against any and all claims arising from its use.
 The end user is solely responsible for ensuring that their use of this tool does not violate any legal restrictions or terms of service governing the networks or systems under test.
 
+**Disclaimer: APIDetector Tool Usage**
+The APIDetector tool is exclusively designed for lawful testing and educational purposes. It is provided on an "as-is" basis without warranties of any kind, express or implied. The developers and distributors of APIDetector explicitly disclaim any liability for misuse, unintended consequences, or damages resulting from the use of this tool.
+**Important Legal Notice:** Unauthorized, illegal, or unethical use of APIDetector is strictly prohibited. Users are solely responsible for adhering to all applicable local, state, federal, and international laws, as well as any terms of service governing the networks or systems they engage with. By using APIDetector, users affirm that they possess the necessary authorizations to test the targeted networks or systems. 
+**Assumption of Risk and Indemnification:** By downloading, installing, or using APIDetector, the user assumes full responsibility for any legal repercussions associated with its usage. The developers and distributors of APIDetector shall not be held liable for any legal consequences, damages, or third-party claims arising from its use. Users agree to indemnify and hold harmless the developers and distributors against any claims, legal fees, or liabilities associated with their actions.
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
