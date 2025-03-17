@@ -11,6 +11,7 @@ from playwright.async_api import async_playwright
 import argparse
 import sys
 import re
+import os
 
 nest_asyncio.apply()
 
@@ -55,7 +56,19 @@ def main():
         print("URL is required.", file=sys.stderr)
         sys.exit(1)
 
-    output_file = args.output or generate_output_filename(args.url)
+    # Get output filename
+    output_filename = args.output or generate_output_filename(args.url)
+    
+    # Check if SCREENSHOT_PATH environment variable is set
+    screenshot_path = os.environ.get('SCREENSHOT_PATH')
+    if screenshot_path:
+        # Use the screenshots folder from environment variable
+        output_file = os.path.join(screenshot_path, output_filename)
+        # Ensure the directory exists
+        os.makedirs(screenshot_path, exist_ok=True)
+    else:
+        # Use the current directory
+        output_file = output_filename
 
     asyncio.run(generate_poc_screenshot(args.url, output_file))
 

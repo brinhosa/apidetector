@@ -12,10 +12,14 @@ Presented at BlackHat Arsenal 2024 ([Link](https://www.blackhat.com/us-24/arsena
 
 - **Modern Web Interface**: User-friendly interface for easy API endpoint scanning
 - **Real-time Results**: Live updates of discovered endpoints and vulnerabilities
-- **Interactive Dashboard**: Clean and responsive UI using modern web technologies
-- **Flexible Configuration**: Easy-to-use form for scan settings
+- **Interactive Dashboard**: Clean and responsive UI using Tailwind CSS and Alpine.js
+- **File Upload Support**: Scan multiple domains/subdomains at once by uploading a text file
+- **Domain Validation**: Input validation with regex pattern matching
+- **Flexible Configuration**: Easy-to-use form for scan settings with improved defaults
 - **Visual Results**: Improved presentation of scan results and PoCs
+- **Responsive Design**: Optimized for all screen sizes from mobile to desktop
 - **Error Handling**: Enhanced error feedback and logging
+- **Accessibility Improvements**: Better keyboard navigation and screen reader support
 
 ### Version 2 Features
 
@@ -119,17 +123,18 @@ python app.py -d
 
 2. Access the web interface:
    - Open your browser and navigate to the displayed URL
-   - Enter the target domain
+   - Enter the target domain OR upload a file with multiple domains (one per line)
    - Configure scan options:
      - HTTP/HTTPS mode
-     - Number of threads (1-50)
+     - Number of threads (default: 10)
      - Custom User-Agent
    - Click "Start Scan"
 
 3. View Results:
-   - Discovered API endpoints are displayed in real-time
+   - Discovered API endpoints are displayed in real-time with progress tracking
    - Vulnerable endpoints are automatically tested
    - PoC screenshots are generated for confirmed vulnerabilities
+   - Results can be viewed while the scan is still in progress
 
 ### Command Line Interface
 

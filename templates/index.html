@@ -312,11 +312,21 @@
                                     </div>
                                     
                                     <!-- PoC Image (if available) -->
-                                    <div x-show="result.includes('/swagger-ui/index.html')" class="mt-3">
+                                    <div x-show="result.includes('/swagger') || result.includes('/api-docs') || result.includes('/openapi')" class="mt-3">
                                         <div class="border-t border-gray-200 pt-3">
                                             <h4 class="text-sm font-semibold text-secondary-700 mb-2">Proof of Concept:</h4>
-                                            <img :src="'/screenshots/' + result.replace(/[^a-zA-Z0-9]/g, '_') + '.png'" class="w-full h-auto rounded-lg border border-gray-300" alt="PoC Screenshot" @error="$el.classList.add('hidden')">
-                                            <p class="text-xs text-gray-500 mt-1">Screenshot of the Swagger UI endpoint</p>
+                                            <div class="relative">
+                                                <img :src="'/screenshots/' + result.replace(/https?:///g, '').replace(/[^a-zA-Z0-9]/g, '_') + '.png'" 
+                                                     class="w-full h-auto rounded-lg border border-gray-300" 
+                                                     alt="PoC Screenshot" 
+                                                     @error="$el.classList.add('hidden'); $el.nextElementSibling.classList.remove('hidden')"
+                                                     loading="lazy">
+                                                <div class="hidden text-center py-4 bg-gray-50 rounded-lg border border-gray-300">
+                                                    <i class="fas fa-image text-gray-400 text-2xl mb-2"></i>
+                                                    <p class="text-sm text-gray-500">Screenshot not available</p>
+                                                </div>
+                                            </div>
+                                            <p class="text-xs text-gray-500 mt-1">Screenshot of the API endpoint</p>
                                         </div>
                                     </div>
                                 </div>
@@ -363,10 +373,6 @@
 
     <style>
         /* Custom scrollbar styling with cross-browser compatibility */
-        .custom-scrollbar {
-            /* For Firefox */
-            scrollbar-width: thin; /* Firefox-specific property */
-        }
         /* For Webkit browsers (Chrome, Safari, Edge) */
         .custom-scrollbar::-webkit-scrollbar {
             width: 8px;
@@ -387,9 +393,117 @@
             max-height: 600px;
             padding-right: 8px;
         }
+        /* Add animation for pulse effect */
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .animate-pulse-slow {
+            animation: pulse-slow 2s ease-in-out infinite;
+        }
     </style>
     
     <script>
+        // Alpine.js initialization
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('scanApp', () => ({
+                scanStatus: 'idle', // idle, running, completed, error
+                results: [],
+                errorMessage: '',
+                progress: 0,
+                domainsScanned: 0,
+                totalDomains: 0,
+                currentDomain: '',
+                scanId: null,
+                pollingInterval: null,
+                
+                init() {
+                    // Form submission handler
+                    this.$refs.scanForm.addEventListener('submit', async (e) => {
+                        e.preventDefault();
+                        this.startScan();
+                    });
+                },
+                
+                async startScan() {
+                    // Reset state
+                    this.scanStatus = 'running';
+                    this.results = [];
+                    this.errorMessage = '';
+                    this.progress = 0;
+                    this.domainsScanned = 0;
+                    this.totalDomains = 0;
+                    this.currentDomain = 'Initializing...';
+                    
+                    const formData = new FormData(this.$refs.scanForm);
+                    
+                    try {
+                        // Start the scan
+                        const response = await fetch('/scan', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (!response.ok) {
+                            throw new Error(data.error || 'An error occurred during the scan');
+                        }
+                        
+                        // Store the scan ID for polling
+                        this.scanId = data.scan_id;
+                        this.totalDomains = data.total_domains || 1;
+                        
+                        // Start polling for updates
+                        this.startPolling();
+                    } catch (err) {
+                        this.scanStatus = 'error';
+                        this.errorMessage = err.message;
+                    }
+                },
+                
+                startPolling() {
+                    // Poll for updates every 2 seconds
+                    this.pollingInterval = setInterval(() => {
+                        this.pollScanStatus();
+                    }, 2000);
+                },
+                
+                async pollScanStatus() {
+                    try {
+                        const response = await fetch(`/scan-status/${this.scanId}`);
+                        const data = await response.json();
+                        
+                        if (!response.ok) {
+                            throw new Error(data.error || 'Failed to get scan status');
+                        }
+                        
+                        // Update state with the latest data
+                        this.progress = data.progress || 0;
+                        this.domainsScanned = data.domains_scanned || 0;
+                        this.currentDomain = data.current_domain || '';
+                        
+                        // Add any new results
+                        if (data.new_results && data.new_results.length > 0) {
+                            this.results = [...this.results, ...data.new_results];
+                        }
+                        
+                        // Check if scan is complete
+                        if (data.status === 'completed') {
+                            this.scanStatus = 'completed';
+                            clearInterval(this.pollingInterval);
+                        } else if (data.status === 'error') {
+                            this.scanStatus = 'error';
+                            this.errorMessage = data.error || 'An error occurred during the scan';
+                            clearInterval(this.pollingInterval);
+                        }
+                    } catch (err) {
+                        console.error('Error polling scan status:', err);
+                    }
+                }
+            }));
+        });
+        
         // Display selected filename when a file is uploaded
         document.addEventListener('DOMContentLoaded', function() {
             const fileInput = document.getElementById('domainFile');

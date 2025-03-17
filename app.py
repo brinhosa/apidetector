@@ -38,9 +38,14 @@ common_endpoints = [
 
 app = Flask(__name__)
 
-# Create a temporary directory for screenshots
-app.config['UPLOAD_FOLDER'] = os.path.join(tempfile.gettempdir(), 'apidetector_screenshots')
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+# Create directories for screenshots and uploads
+SCREENSHOTS_FOLDER = os.path.join(current_dir, 'screenshots')
+UPLOADS_FOLDER = os.path.join(current_dir, 'uploads')
+os.makedirs(SCREENSHOTS_FOLDER, exist_ok=True)
+os.makedirs(UPLOADS_FOLDER, exist_ok=True)
+
+app.config['UPLOAD_FOLDER'] = UPLOADS_FOLDER
+app.config['SCREENSHOTS_FOLDER'] = SCREENSHOTS_FOLDER
 
 @app.route('/')
 def index():
@@ -108,6 +113,9 @@ def scan():
                     futures = []
                     for domain in valid_domains:
                         active_scans[scan_id]['current_domain'] = domain
+                        # Update the path for screenshots to use our screenshots folder
+                        os.environ['SCREENSHOT_PATH'] = app.config['SCREENSHOTS_FOLDER']
+                        
                         futures.append(
                             executor.submit(
                                 apidetectorv2.test_subdomain_endpoints,
@@ -170,10 +178,23 @@ def scan_status(scan_id):
 @app.route('/screenshots/<path:filename>')
 def serve_screenshot(filename):
     try:
-        return send_file(
-            os.path.join(app.config['UPLOAD_FOLDER'], filename),
-            mimetype='image/png'
-        )
+        # First try to find the file with the exact name
+        screenshot_path = os.path.join(app.config['SCREENSHOTS_FOLDER'], filename)
+        
+        # If not found, try with a sanitized filename (replacing special chars with underscores)
+        if not os.path.exists(screenshot_path):
+            sanitized_filename = ''.join(c if c.isalnum() else '_' for c in filename)
+            screenshot_path = os.path.join(app.config['SCREENSHOTS_FOLDER'], sanitized_filename)
+        
+        # If still not found, return a placeholder image
+        if not os.path.exists(screenshot_path):
+            return Response(
+                'Screenshot not available', 
+                status=404,
+                headers={'Content-Type': 'text/plain'}
+            )
+            
+        return send_file(screenshot_path, mimetype='image/png')
     except Exception as e:
         app.logger.error(f"Error serving screenshot: {str(e)}")
         return jsonify({'error': 'An unexpected error occurred'}), 500
