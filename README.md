@@ -1,54 +1,137 @@
 # APIDetector
 
 APIDetector is a powerful and efficient tool designed for testing exposed Swagger endpoints in various subdomains with unique smart capabilities to detect false-positives. It's particularly useful for security professionals and developers who are engaged in API testing and vulnerability scanning.
-Presented at BlackHat Arsenal 2024 (https://www.blackhat.com/us-24/arsenal/schedule/index.html#apidetector-advanced-swagger-endpoint-detection-and-vulnerability-analysis-39649)
 
-## New in Version 2
+Presented at BlackHat Arsenal 2024 ([Link](https://www.blackhat.com/us-24/arsenal/schedule/index.html#apidetector-advanced-swagger-endpoint-detection-and-vulnerability-analysis-39649))
 
-APIDetector v2, launched at Blackhat Arsenal, automatically detects vulnerable Swagger versions with XSS and creates a proof of concept (PoC). The `apidetectorv2.py` file has been added to the repository to support this new feature.
+![APIDetector Web Interface](docs/images/web-interface.png)
 
-### Requirements
+## Version History
 
-To use the new version, install the required packages:
+### New in Version 3 (Current)
+
+- **Modern Web Interface**: User-friendly interface for easy API endpoint scanning
+- **Real-time Results**: Live updates of discovered endpoints and vulnerabilities
+- **Interactive Dashboard**: Clean and responsive UI using modern web technologies
+- **Flexible Configuration**: Easy-to-use form for scan settings
+- **Visual Results**: Improved presentation of scan results and PoCs
+- **Error Handling**: Enhanced error feedback and logging
+
+### Version 2 Features
+
+- **Automatic XSS Detection**: Identifies vulnerable Swagger versions
+- **Visual PoC Generation**: Creates proof of concepts for vulnerabilities
+- **Enhanced Error Handling**: Better feedback and logging
+- **Improved Performance**: Optimized scanning algorithms
+
+### Core Features
+
+- **Flexible Input**: Accept single domains or lists of subdomains
+- **Multiple Protocols**: Test endpoints over both HTTP and HTTPS
+- **Concurrency**: Multi-threaded scanning for faster results
+- **Smart Detection**: Advanced false-positive detection capabilities
+- **Customizable Settings**: Configure threads, user-agent, and more
+
+## Requirements
+
+APIDetector v3 requires Python 3.x and the following packages:
 
 ```bash
-pip install playwright nest_asyncio
+flask         # Web framework
+requests      # HTTP client
+playwright    # Browser automation
+nest_asyncio  # Async IO support
 ```
 
-Then, install Playwright:
+All dependencies are listed in `requirements.txt` and can be installed automatically during setup.
 
-```bash
-playwright install
-```
 
-## Features
-
-- **Flexible Input**: Accepts a single domain or a list of subdomains from a file.
-- **Multiple Protocols**: Option to test endpoints over both HTTP and HTTPS.
-- **Concurrency**: Utilizes multi-threading for faster scanning.
-- **Customizable Output**: Save results to a file or print to stdout.
-- **Verbose and Quiet Modes**: Default verbose mode for detailed logs, with an option for quiet mode.
-- **Custom User-Agent**: Ability to specify a custom User-Agent for requests.
-- **Smart Detection of False-Positives**: Ability to detect most false-positives.
-- **Automatic PoC Generation**: Detects vulnerable Swagger versions and generates a PoC image automatically.
 
 ## Getting Started
 
 ### Prerequisites
 
-Before running APIDetector, ensure you have Python 3.x and pip installed on your system. You can download Python [here](https://www.python.org/downloads/).
+- Python 3.x ([Download](https://www.python.org/downloads/))
+- pip (Python package installer)
+- Git (for cloning the repository)
 
 ### Installation
 
-Clone the APIDetector repository to your local machine using:
-
+1. Clone the repository:
 ```bash
 git clone https://github.com/brinhosa/apidetector.git
 cd apidetector
-pip install requests
 ```
 
-### Usage
+2. Create and activate a virtual environment:
+```bash
+# On macOS/Linux:
+python3 -m venv venv
+source venv/bin/activate
+
+# On Windows:
+python -m venv venv
+venv\Scripts\activate
+```
+
+3. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+4. Install browser automation:
+```bash
+playwright install
+```
+
+## Usage
+
+APIDetector v3 offers two ways to interact with the tool: a modern web interface (new in v3) and a traditional command-line interface (original).
+
+### Web Interface
+
+1. Start the web server:
+```bash
+python app.py [options]
+```
+
+Available options:
+| Option | Description | Default |
+|--------|-------------|----------|
+| `-p`, `--port` | Port number | 5000 |
+| `--host` | Host address | 127.0.0.1 |
+| `-d`, `--debug` | Enable debug mode | False |
+
+Examples:
+```bash
+# Run on default settings (localhost:5000)
+python app.py
+
+# Run on custom port
+python app.py -p 8080
+
+# Allow external access
+python app.py --host 0.0.0.0
+
+# Run in debug mode
+python app.py -d
+```
+
+2. Access the web interface:
+   - Open your browser and navigate to the displayed URL
+   - Enter the target domain
+   - Configure scan options:
+     - HTTP/HTTPS mode
+     - Number of threads (1-50)
+     - Custom User-Agent
+   - Click "Start Scan"
+
+3. View Results:
+   - Discovered API endpoints are displayed in real-time
+   - Vulnerable endpoints are automatically tested
+   - PoC screenshots are generated for confirmed vulnerabilities
+
+### Command Line Interface
 
 Run APIDetector using the command line. Here are some usage examples:
 
@@ -157,7 +240,7 @@ Exposing Swagger or OpenAPI documentation endpoints can present various risks, p
 
 Contributions to APIDetector are welcome! Feel free to fork the repository, make changes, and submit pull requests.
 Special thanks to the contributing members who helped with testing and features suggestions:
-- Filipi Pires - https://www.linkedin.com/in/filipipires/
+- Filipi Pires (Ambassador) - https://www.linkedin.com/in/filipipires/
 - Denis Lourenço -  https://www.linkedin.com/in/🚲denis-lourenço-18b07a128/
 - Bruno Francisco Cardoso - https://www.linkedin.com/in/bruno-francisco-cardoso-27445953/
 
