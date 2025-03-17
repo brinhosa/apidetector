@@ -311,34 +311,31 @@
                                         <span class="ml-2 text-xs px-2 py-1 rounded-full bg-success bg-opacity-10 text-success">Found</span>
                                     </div>
                                     
-                                    <!-- PoC Image (if available) -->
-                                    <div x-show="result.includes('/swagger') || result.includes('/api-docs') || result.includes('/openapi')" class="mt-3">
+                                    <!-- PoC Image (if available) - Only shown once per domain -->
+                                    <div x-show="showPocImage(result)" class="mt-3">
                                         <div class="border-t border-gray-200 pt-3">
                                             <h4 class="text-sm font-semibold text-secondary-700 mb-2">Proof of Concept:</h4>
                                             <div class="relative">
-                                                <!-- Extract domain and endpoint for screenshot filename -->
+                                                <!-- Extract domain for screenshot filename -->
                                                 <img x-init="
                                                     let url = result;
                                                     let domain = '';
-                                                    let endpoint = '';
                                                     
-                                                    // Extract domain
+                                                    // Extract domain only
                                                     if (url.includes('://')) {
                                                         let urlNoProtocol = url.split('://')[1];
                                                         if (urlNoProtocol.includes('/')) {
                                                             domain = urlNoProtocol.split('/')[0];
-                                                            endpoint = urlNoProtocol.substring(urlNoProtocol.indexOf('/'));
                                                         } else {
                                                             domain = urlNoProtocol;
                                                         }
                                                     }
                                                     
-                                                    // Clean domain and endpoint for filename
+                                                    // Clean domain for filename
                                                     let cleanDomain = domain.replace(/[^a-zA-Z0-9]/g, '_');
-                                                    let cleanEndpoint = endpoint.replace(/[^a-zA-Z0-9]/g, '_');
                                                     
-                                                    // Set the src attribute
-                                                    $el.src = '/screenshots/' + cleanDomain + '_' + cleanEndpoint.substring(0, 40) + '.png';
+                                                    // Set the src attribute - just use domain for the filename
+                                                    $el.src = '/screenshots/' + cleanDomain + '.png';
                                                 "
                                                      class="w-full h-auto rounded-lg border border-gray-300" 
                                                      alt="PoC Screenshot" 
@@ -349,7 +346,7 @@
                                                     <p class="text-sm text-gray-500">Screenshot not available</p>
                                                 </div>
                                             </div>
-                                            <p class="text-xs text-gray-500 mt-1">Screenshot of the API endpoint</p>
+                                            <p class="text-xs text-gray-500 mt-1">Screenshot of vulnerable API endpoint</p>
                                         </div>
                                     </div>
                                 </div>
@@ -439,6 +436,36 @@
                 currentDomain: '',
                 scanId: null,
                 pollingInterval: null,
+                // Track domains that have already shown a PoC image
+                shownDomains: new Set(),
+                
+                // Function to determine if we should show a PoC image for this result
+                showPocImage(url) {
+                    // Only show for Swagger/OpenAPI endpoints
+                    if (!(url.includes('/swagger') || url.includes('/api-docs') || url.includes('/openapi'))) {
+                        return false;
+                    }
+                    
+                    // Extract the domain
+                    let domain = '';
+                    if (url.includes('://')) {
+                        let urlNoProtocol = url.split('://')[1];
+                        if (urlNoProtocol.includes('/')) {
+                            domain = urlNoProtocol.split('/')[0];
+                        } else {
+                            domain = urlNoProtocol;
+                        }
+                    }
+                    
+                    // If we've already shown this domain, don't show it again
+                    if (this.shownDomains.has(domain)) {
+                        return false;
+                    }
+                    
+                    // Mark this domain as shown
+                    this.shownDomains.add(domain);
+                    return true;
+                },
                 
                 init() {
                     // Form submission handler

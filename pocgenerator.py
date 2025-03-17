@@ -19,32 +19,23 @@ def generate_output_filename(url):
     # Get domain from environment if available
     domain = os.environ.get('DOMAIN', '')
     
-    # Extract endpoint path from URL
-    url_path = url.split('://')[-1]  # Remove protocol
-    if '/' in url_path:
-        # Split at first slash after domain
-        parts = url_path.split('/', 1)
-        if len(parts) > 1:
-            endpoint = parts[1]
-        else:
-            endpoint = ''
-    else:
-        endpoint = ''
-    
-    # Use domain and endpoint for filename
+    # If domain is provided in environment, use it
     if domain:
         # Create a clean domain name
         clean_domain = re.sub(r'[^a-zA-Z0-9]', '_', domain)
-        # Create a clean endpoint name
-        clean_endpoint = re.sub(r'[^a-zA-Z0-9]', '_', endpoint)
-        # Combine them with a meaningful separator
-        filename = f"{clean_domain}_{clean_endpoint[:40]}".strip('_')
-    else:
-        # Fallback to old method if domain not provided
-        url_no_protocol = re.sub(r'^https?:\/\/', '', url)
-        filename = re.sub(r'[^a-zA-Z0-9]', '_', url_no_protocol)[:60]
+        return f"{clean_domain}.png"
     
-    return f"{filename}.png"
+    # Otherwise extract domain from URL
+    url_path = url.split('://')[-1]  # Remove protocol
+    if '/' in url_path:
+        # Get just the domain part
+        domain = url_path.split('/', 1)[0]
+    else:
+        domain = url_path
+    
+    # Create a clean domain name
+    clean_domain = re.sub(r'[^a-zA-Z0-9]', '_', domain)
+    return f"{clean_domain}.png"
 
 async def generate_poc_screenshot(url, output_file):
     try:
