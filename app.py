@@ -178,23 +178,39 @@ def scan_status(scan_id):
 @app.route('/screenshots/<path:filename>')
 def serve_screenshot(filename):
     try:
-        # First try to find the file with the exact name
-        screenshot_path = os.path.join(app.config['SCREENSHOTS_FOLDER'], filename)
+        # Try multiple possible locations for the screenshot
+        possible_paths = [
+            # First try in the new screenshots folder with exact name
+            os.path.join(app.config['SCREENSHOTS_FOLDER'], filename),
+            
+            # Try with a sanitized filename (replacing special chars with underscores)
+            os.path.join(app.config['SCREENSHOTS_FOLDER'], ''.join(c if c.isalnum() else '_' for c in filename)),
+            
+            # Try with a sanitized filename + .png extension
+            os.path.join(app.config['SCREENSHOTS_FOLDER'], ''.join(c if c.isalnum() else '_' for c in filename) + '.png'),
+            
+            # Check the old temp directory location (for backward compatibility)
+            os.path.join(tempfile.gettempdir(), 'apidetector_screenshots', filename),
+            
+            # Check the old temp directory with sanitized filename
+            os.path.join(tempfile.gettempdir(), 'apidetector_screenshots', ''.join(c if c.isalnum() else '_' for c in filename))
+        ]
         
-        # If not found, try with a sanitized filename (replacing special chars with underscores)
-        if not os.path.exists(screenshot_path):
-            sanitized_filename = ''.join(c if c.isalnum() else '_' for c in filename)
-            screenshot_path = os.path.join(app.config['SCREENSHOTS_FOLDER'], sanitized_filename)
+        # Try each path until we find an existing file
+        for path in possible_paths:
+            if os.path.exists(path):
+                return send_file(path, mimetype='image/png')
         
-        # If still not found, return a placeholder image
-        if not os.path.exists(screenshot_path):
+        # If no screenshot found, copy a placeholder image if available, or return a text response
+        placeholder_path = os.path.join(current_dir, 'static', 'placeholder.png')
+        if os.path.exists(placeholder_path):
+            return send_file(placeholder_path, mimetype='image/png')
+        else:
             return Response(
                 'Screenshot not available', 
                 status=404,
                 headers={'Content-Type': 'text/plain'}
             )
-            
-        return send_file(screenshot_path, mimetype='image/png')
     except Exception as e:
         app.logger.error(f"Error serving screenshot: {str(e)}")
         return jsonify({'error': 'An unexpected error occurred'}), 500

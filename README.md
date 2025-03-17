@@ -17,6 +17,7 @@ Presented at BlackHat Arsenal 2024 ([Link](https://www.blackhat.com/us-24/arsena
 - **Domain Validation**: Input validation with regex pattern matching
 - **Flexible Configuration**: Easy-to-use form for scan settings with improved defaults
 - **Visual Results**: Improved presentation of scan results and PoCs
+- **Screenshot Management**: Automatically captures and displays screenshots of vulnerable endpoints
 - **Responsive Design**: Optimized for all screen sizes from mobile to desktop
 - **Error Handling**: Enhanced error feedback and logging
 - **Accessibility Improvements**: Better keyboard navigation and screen reader support
@@ -43,11 +44,21 @@ APIDetector v3 requires Python 3.x and the following packages:
 ```bash
 flask         # Web framework
 requests      # HTTP client
-playwright    # Browser automation
+playwright    # Browser automation for screenshots
 nest_asyncio  # Async IO support
 ```
 
 All dependencies are listed in `requirements.txt` and can be installed automatically during setup.
+
+### First-time Setup
+
+After installing the required packages, you need to install the Playwright browsers:
+
+```bash
+python -m playwright install
+```
+
+This is required for the screenshot functionality to work properly.
 
 
 
@@ -87,6 +98,29 @@ pip install -r requirements.txt
 ```bash
 playwright install
 ```
+
+### Web Interface (Version 3)
+
+1. Start the web server:
+```bash
+python app.py
+```
+
+2. By default, the server runs on http://127.0.0.1:5000. You can specify a different port or host:
+```bash
+python app.py --port 8080 --host 0.0.0.0
+```
+
+3. Open your browser and navigate to the URL shown in the terminal.
+
+4. Using the web interface:
+   - Enter a single domain or upload a file with multiple domains (one per line)
+   - Configure scan options (thread count, mixed mode, user agent)
+   - Click 'Start Scan' to begin
+   - View real-time results as they appear
+   - Screenshots of vulnerable endpoints will be displayed automatically
+
+5. The screenshots are saved in the `screenshots` directory for future reference.
 
 ## Usage
 

