@@ -17,7 +17,8 @@ Presented at BlackHat Arsenal 2024 ([Link](https://www.blackhat.com/us-24/arsena
 - **Domain Validation**: Input validation with regex pattern matching
 - **Flexible Configuration**: Easy-to-use form for scan settings with improved defaults
 - **Visual Results**: Improved presentation of scan results and PoCs
-- **Screenshot Management**: Automatically captures and displays screenshots of vulnerable endpoints
+- **Screenshot Management**: Automatically captures and displays screenshots of vulnerable endpoints (one per subdomain)
+- **Targeted PoC Generation**: Generates proof of concept only for `/swagger-ui/index.html` endpoints
 - **Responsive Design**: Optimized for all screen sizes from mobile to desktop
 - **Error Handling**: Enhanced error feedback and logging
 - **Accessibility Improvements**: Better keyboard navigation and screen reader support
