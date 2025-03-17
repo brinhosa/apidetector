@@ -16,11 +16,35 @@ import os
 nest_asyncio.apply()
 
 def generate_output_filename(url):
-    # Remove the http or https part
-    url = re.sub(r'^https?:\/\/', '', url)
-    # Replace non-alphanumeric characters with underscores
-    filename = re.sub(r'[^a-zA-Z0-9]', '_', url)
-    return f"{filename[:60]}.png"
+    # Get domain from environment if available
+    domain = os.environ.get('DOMAIN', '')
+    
+    # Extract endpoint path from URL
+    url_path = url.split('://')[-1]  # Remove protocol
+    if '/' in url_path:
+        # Split at first slash after domain
+        parts = url_path.split('/', 1)
+        if len(parts) > 1:
+            endpoint = parts[1]
+        else:
+            endpoint = ''
+    else:
+        endpoint = ''
+    
+    # Use domain and endpoint for filename
+    if domain:
+        # Create a clean domain name
+        clean_domain = re.sub(r'[^a-zA-Z0-9]', '_', domain)
+        # Create a clean endpoint name
+        clean_endpoint = re.sub(r'[^a-zA-Z0-9]', '_', endpoint)
+        # Combine them with a meaningful separator
+        filename = f"{clean_domain}_{clean_endpoint[:40]}".strip('_')
+    else:
+        # Fallback to old method if domain not provided
+        url_no_protocol = re.sub(r'^https?:\/\/', '', url)
+        filename = re.sub(r'[^a-zA-Z0-9]', '_', url_no_protocol)[:60]
+    
+    return f"{filename}.png"
 
 async def generate_poc_screenshot(url, output_file):
     try:

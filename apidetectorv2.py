@@ -25,7 +25,7 @@ ascii_art = """
 """
 
 # Function to test a single endpoint
-def test_endpoint(url, error_content, verbose, user_agent):
+def test_endpoint(url, error_content, verbose, user_agent, poc_already_generated=False):
     headers = {'User-Agent': user_agent}
     try:
         response = requests.get(url, headers=headers, timeout=30, allow_redirects=False)
@@ -37,10 +37,17 @@ def test_endpoint(url, error_content, verbose, user_agent):
                 swagger_patterns = ['/swagger-ui', '/api-docs', '/openapi', '/swagger.', '/swagger-resources']
                 is_swagger = any(pattern in url for pattern in swagger_patterns)
                 
-                if is_swagger:
+                # Only generate PoC if we haven't already generated one for this domain
+                # and this is a Swagger/OpenAPI endpoint
+                if is_swagger and not poc_already_generated:
                     print(f"Calling PoC generator for {url}")
                     current_dir = os.path.dirname(os.path.abspath(__file__))
                     pocgenerator_path = os.path.join(current_dir, 'pocgenerator.py')
+                    
+                    # Extract the domain from the URL for use in the filename
+                    from urllib.parse import urlparse
+                    parsed_url = urlparse(url)
+                    domain = parsed_url.netloc
                     
                     # Add configUrl parameter for Swagger UI endpoints
                     endpoint_url = url
@@ -49,6 +56,8 @@ def test_endpoint(url, error_content, verbose, user_agent):
                     
                     # Pass the SCREENSHOT_PATH environment variable if it exists
                     env = os.environ.copy()
+                    # Add domain information to help with filename generation
+                    env['DOMAIN'] = domain
                     subprocess.run(['python3', pocgenerator_path, endpoint_url], env=env)
                 return url
     except requests.RequestException as e:
@@ -96,12 +105,19 @@ def test_subdomain_endpoints(subdomain, common_endpoints, mixed_mode, verbose, u
         except requests.RequestException:
             pass
 
+    # Flag to track if we've already generated a PoC for this domain
+    poc_generated = False
+    
     for protocol in protocols:
         for endpoint in common_endpoints:
             url = f"{protocol}{subdomain}{endpoint}"
-            result = test_endpoint(url, error_content, verbose, user_agent)
+            result = test_endpoint(url, error_content, verbose, user_agent, poc_generated)
             if result:
                 valid_urls.append(result)
+                # If this is a Swagger/OpenAPI endpoint, mark that we've generated a PoC
+                swagger_patterns = ['/swagger-ui', '/api-docs', '/openapi', '/swagger.', '/swagger-resources']
+                if any(pattern in url for pattern in swagger_patterns):
+                    poc_generated = True
                 if verbose:
                     print(f"Found: {url}")
     return valid_urls

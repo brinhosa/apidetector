@@ -316,7 +316,30 @@
                                         <div class="border-t border-gray-200 pt-3">
                                             <h4 class="text-sm font-semibold text-secondary-700 mb-2">Proof of Concept:</h4>
                                             <div class="relative">
-                                                <img :src="'/screenshots/' + result.replace(/https?:///g, '').replace(/[^a-zA-Z0-9]/g, '_') + '.png'" 
+                                                <!-- Extract domain and endpoint for screenshot filename -->
+                                                <img x-init="
+                                                    let url = result;
+                                                    let domain = '';
+                                                    let endpoint = '';
+                                                    
+                                                    // Extract domain
+                                                    if (url.includes('://')) {
+                                                        let urlNoProtocol = url.split('://')[1];
+                                                        if (urlNoProtocol.includes('/')) {
+                                                            domain = urlNoProtocol.split('/')[0];
+                                                            endpoint = urlNoProtocol.substring(urlNoProtocol.indexOf('/'));
+                                                        } else {
+                                                            domain = urlNoProtocol;
+                                                        }
+                                                    }
+                                                    
+                                                    // Clean domain and endpoint for filename
+                                                    let cleanDomain = domain.replace(/[^a-zA-Z0-9]/g, '_');
+                                                    let cleanEndpoint = endpoint.replace(/[^a-zA-Z0-9]/g, '_');
+                                                    
+                                                    // Set the src attribute
+                                                    $el.src = '/screenshots/' + cleanDomain + '_' + cleanEndpoint.substring(0, 40) + '.png';
+                                                "
                                                      class="w-full h-auto rounded-lg border border-gray-300" 
                                                      alt="PoC Screenshot" 
                                                      @error="$el.classList.add('hidden'); $el.nextElementSibling.classList.remove('hidden')"
