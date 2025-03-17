@@ -178,10 +178,25 @@ def scan_status(scan_id):
 @app.route('/screenshots/<path:filename>')
 def serve_screenshot(filename):
     try:
+        # Extract the domain part from the filename
+        domain_part = filename
+        if '/' in filename:
+            domain_part = filename.split('/', 1)[0]
+        
+        # Remove file extension if present
+        if domain_part.endswith('.png'):
+            domain_part = domain_part[:-4]
+        
         # Try multiple possible locations for the screenshot
         possible_paths = [
             # First try in the new screenshots folder with exact name
             os.path.join(app.config['SCREENSHOTS_FOLDER'], filename),
+            
+            # Try with just the domain name
+            os.path.join(app.config['SCREENSHOTS_FOLDER'], f"{domain_part}.png"),
+            
+            # Try with a sanitized domain name
+            os.path.join(app.config['SCREENSHOTS_FOLDER'], ''.join(c if c.isalnum() else '_' for c in domain_part) + '.png'),
             
             # Try with a sanitized filename (replacing special chars with underscores)
             os.path.join(app.config['SCREENSHOTS_FOLDER'], ''.join(c if c.isalnum() else '_' for c in filename)),
@@ -199,6 +214,7 @@ def serve_screenshot(filename):
         # Try each path until we find an existing file
         for path in possible_paths:
             if os.path.exists(path):
+                app.logger.info(f"Found screenshot at: {path}")
                 return send_file(path, mimetype='image/png')
         
         # If no screenshot found, copy a placeholder image if available, or return a text response

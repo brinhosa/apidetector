@@ -311,7 +311,7 @@
                                         <span class="ml-2 text-xs px-2 py-1 rounded-full bg-success bg-opacity-10 text-success">Found</span>
                                     </div>
                                     
-                                    <!-- PoC Image (if available) - Only shown once per domain -->
+                                    <!-- PoC Image (if available) - Only shown once per domain for swagger-ui/index.html -->
                                     <div x-show="showPocImage(result)" class="mt-3">
                                         <div class="border-t border-gray-200 pt-3">
                                             <h4 class="text-sm font-semibold text-secondary-700 mb-2">Proof of Concept:</h4>
@@ -336,10 +336,13 @@
                                                     
                                                     // Set the src attribute - just use domain for the filename
                                                     $el.src = '/screenshots/' + cleanDomain + '.png';
+                                                    
+                                                    // Log the image URL for debugging
+                                                    console.log('Loading PoC image: /screenshots/' + cleanDomain + '.png');
                                                 "
                                                      class="w-full h-auto rounded-lg border border-gray-300" 
                                                      alt="PoC Screenshot" 
-                                                     @error="$el.classList.add('hidden'); $el.nextElementSibling.classList.remove('hidden')"
+                                                     @error="$el.classList.add('hidden'); $el.nextElementSibling.classList.remove('hidden'); console.log('Error loading image: ' + $el.src)"
                                                      loading="lazy">
                                                 <div class="hidden text-center py-4 bg-gray-50 rounded-lg border border-gray-300">
                                                     <i class="fas fa-image text-gray-400 text-2xl mb-2"></i>
@@ -441,8 +444,8 @@
                 
                 // Function to determine if we should show a PoC image for this result
                 showPocImage(url) {
-                    // Only show for Swagger/OpenAPI endpoints
-                    if (!(url.includes('/swagger') || url.includes('/api-docs') || url.includes('/openapi'))) {
+                    // Only show for Swagger UI index.html endpoints
+                    if (!url.includes('/swagger-ui/index.html')) {
                         return false;
                     }
                     

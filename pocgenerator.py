@@ -54,12 +54,15 @@ async def generate_poc_screenshot(url, output_file):
                 print(f"XSS was found, PoC image saved as \"{output_file}\".")
                 # Take a screenshot
                 await page.screenshot(path=output_file)
+                # If this is a PoC generation, print a special message that can be detected
+                if os.environ.get('GENERATE_POC') == 'true':
+                    print("Screenshot saved successfully for PoC")
             else:
                 print("XSS was not found.")
 
             await browser.close()
     except Exception as e:
-        print("An error occurred.")
+        print(f"An error occurred: {e}")
 
 def main():
     parser = argparse.ArgumentParser(description="PoC Generator - Generates a screenshot of the Swagger UI page if XSS text is found.")
