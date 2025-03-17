@@ -157,8 +157,9 @@ Exposing Swagger or OpenAPI documentation endpoints can present various risks, p
 
 Contributions to APIDetector are welcome! Feel free to fork the repository, make changes, and submit pull requests.
 Special thanks to the contributing members who helped with testing and features suggestions:
-- Denis Lourenço
-- Bruno Francisco Cardoso
+- Filipi Pires - https://www.linkedin.com/in/filipipires/
+- Denis Lourenço -  https://www.linkedin.com/in/🚲denis-lourenço-18b07a128/
+- Bruno Francisco Cardoso - https://www.linkedin.com/in/bruno-francisco-cardoso-27445953/
 
 ## Legal Disclaimer
 
@@ -178,3 +179,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 - Thanks to all the contributors who have helped with testing, suggestions, and improvements.
 - Author: Rafael B. Brinhosa  - https://www.linkedin.com/in/brinhosa/
+
