@@ -1,9 +1,6 @@
 <p align="center">
   <img src="https://github.com/brinhosa/apidetector/blob/main/apidetectorlogo.png?raw=true" alt="APIDetector Web Interface" width="200"/>
 </p>
-
-<h1 align="center">APIDetector</h1>
-<p align="center"><em>Efficient API Endpoint Discovery</em></p>
 ---
 APIDetector is a powerful and efficient tool designed for testing exposed Swagger endpoints in various subdomains with unique smart capabilities to detect false-positives. It's particularly useful for security professionals and developers who are engaged in API testing and vulnerability scanning.
 
