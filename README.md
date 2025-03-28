@@ -1,10 +1,10 @@
+<center><img src="https://github.com/brinhosa/apidetector/blob/main/apidetectorlogo.png?raw=true" alt="APIDetector Web Interface" width="250"/></center>
+
 # APIDetector
 
 APIDetector is a powerful and efficient tool designed for testing exposed Swagger endpoints in various subdomains with unique smart capabilities to detect false-positives. It's particularly useful for security professionals and developers who are engaged in API testing and vulnerability scanning.
 
 Presented at BlackHat Arsenal 2024 ([Link](https://www.blackhat.com/us-24/arsenal/schedule/index.html#apidetector-advanced-swagger-endpoint-detection-and-vulnerability-analysis-39649))
-
-<img src="https://github.com/brinhosa/apidetector/blob/main/apidetectorlogo.png?raw=true" alt="APIDetector Web Interface" width="200"/>
 
 ## Version History
 
