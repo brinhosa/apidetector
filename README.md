@@ -4,7 +4,7 @@ APIDetector is a powerful and efficient tool designed for testing exposed Swagge
 
 Presented at BlackHat Arsenal 2024 ([Link](https://www.blackhat.com/us-24/arsenal/schedule/index.html#apidetector-advanced-swagger-endpoint-detection-and-vulnerability-analysis-39649))
 
-![APIDetector Web Interface](apidetectorlogo.png)
+<img src="https://github.com/brinhosa/apidetector/blob/main/apidetectorlogo.png?raw=true" alt="APIDetector Web Interface" width="200"/>
 
 ## Version History
 
